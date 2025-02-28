@@ -610,6 +610,8 @@ class GenerateKeyResponse(KeyRequestBase):
     token_id: Optional[str] = None
     litellm_budget_table: Optional[Any] = None
     token: Optional[str] = None
+    created_by: Optional[str] = None
+    updated_by: Optional[str] = None
 
     @model_validator(mode="before")
     @classmethod
@@ -1387,7 +1389,9 @@ class LiteLLM_VerificationToken(LiteLLMPydanticObjectBase):
     litellm_budget_table: Optional[dict] = None
     org_id: Optional[str] = None  # org id for a given key
     created_at: Optional[datetime] = None
+    created_by: Optional[str] = None
     updated_at: Optional[datetime] = None
+    updated_by: Optional[str] = None
 
     model_config = ConfigDict(protected_namespaces=())
 
@@ -1572,6 +1576,10 @@ class LiteLLM_UserTable(LiteLLMPydanticObjectBase):
 class LiteLLM_UserTableFiltered(BaseModel):  # done to avoid exposing sensitive data
     user_id: str
     user_email: str
+
+
+class LiteLLM_UserTableWithKeyCount(LiteLLM_UserTable):
+    key_count: int = 0
 
 
 class LiteLLM_EndUserTable(LiteLLMPydanticObjectBase):
