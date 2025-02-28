@@ -6212,6 +6212,8 @@ class ProviderConfigManager:
             return litellm.InfinityRerankConfig()
         elif litellm.LlmProviders.JINA_AI == provider:
             return litellm.JinaAIRerankConfig()
+        elif litellm.LlmProviders.DASHSCOPE == provider:
+            return litellm.DashscopeRerankConfig()
         return litellm.CohereRerankConfig()
 
     @staticmethod

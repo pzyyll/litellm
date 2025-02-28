@@ -481,3 +481,18 @@ def test_rerank_cohere_api():
     assert response.results[0]["document"]["text"] is not None
     assert response.results[0]["document"]["text"] == "hello"
     assert response.results[1]["document"]["text"] == "world"
+
+
+def test_rerank_dashscope():
+    # import os
+    # os.environ["DASHSCOPE_API_KEY"] = "sk-123"
+
+    response = litellm.rerank(
+        model="dashscope/gte-rerank",
+        query="hello",
+        documents=["hello", "world", "how", "are", "you"],
+        return_documents=True,
+        top_n=3,
+    )
+
+    assert response.results is not None

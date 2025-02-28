@@ -828,6 +828,7 @@ from .llms.cohere.rerank_v2.transformation import CohereRerankV2Config
 from .llms.azure_ai.rerank.transformation import AzureAIRerankConfig
 from .llms.infinity.rerank.transformation import InfinityRerankConfig
 from .llms.jina_ai.rerank.transformation import JinaAIRerankConfig
+from .llms.dashscope.rerank.transformation import DashscopeRerankConfig
 from .llms.clarifai.chat.transformation import ClarifaiConfig
 from .llms.ai21.chat.transformation import AI21ChatConfig, AI21ChatConfig as AI21Config
 from .llms.together_ai.chat import TogetherAIConfig
