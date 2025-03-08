@@ -41,10 +41,12 @@ const sidebars = {
             "proxy/deploy",
             "proxy/prod",
             "proxy/cli",
+            "proxy/release_cycle",
             "proxy/model_management",
             "proxy/health",
             "proxy/debugging",
             "proxy/spending_monitoring",
+            "proxy/master_key_rotations",
           ],
         },
         "proxy/demo",
@@ -255,13 +257,19 @@ const sidebars = {
         "completion/batching",
         "completion/mock_requests",
         "completion/reliable_completions",
-        'tutorials/litellm_proxy_aporia',
 
       ]
     },
     {
       type: "category",
       label: "Supported Endpoints",
+      link: {
+        type: "generated-index",
+        title: "Supported Endpoints",
+        description:
+          "Learn how to deploy + call models from different providers on LiteLLM",
+        slug: "/supported_endpoints",
+      },
       items: [
         {
           type: "category",
@@ -349,23 +357,6 @@ const sidebars = {
           label: "LangChain, LlamaIndex, Instructor Integration",
           items: ["langchain/langchain", "tutorials/instructor"],
         },
-        {
-          type: "category",
-          label: "Tutorials",
-          items: [
-
-            'tutorials/azure_openai',
-            'tutorials/instructor',
-            "tutorials/gradio_integration",
-            "tutorials/huggingface_codellama",
-            "tutorials/huggingface_tutorial",
-            "tutorials/TogetherAI_liteLLM",
-            "tutorials/finetuned_chat_gpt",
-            "tutorials/text_completion",
-            "tutorials/first_playground",
-            "tutorials/model_fallbacks",
-          ],
-        },
       ],
     },
     {
@@ -423,6 +414,31 @@ const sidebars = {
         "observability/opik_integration",
       ],
     },
+    {
+      type: "category",
+      label: "Tutorials",
+      items: [
+        "tutorials/openweb_ui",
+        'tutorials/litellm_proxy_aporia',
+        {
+          type: "category",
+          label: "LiteLLM Python SDK Tutorials",
+          items: [
+
+            'tutorials/azure_openai',
+            'tutorials/instructor',
+            "tutorials/gradio_integration",
+            "tutorials/huggingface_codellama",
+            "tutorials/huggingface_tutorial",
+            "tutorials/TogetherAI_liteLLM",
+            "tutorials/finetuned_chat_gpt",
+            "tutorials/text_completion",
+            "tutorials/first_playground",
+            "tutorials/model_fallbacks",
+          ],
+        },
+      ]
+    },
 
     {
       type: "category",
@@ -445,6 +461,7 @@ const sidebars = {
           items: [
             "projects/smolagents",
             "projects/Docq.AI",
+            "projects/PDL",
             "projects/OpenInterpreter",
             "projects/Elroy",
             "projects/dbally",
@@ -460,6 +477,7 @@ const sidebars = {
             "projects/YiVal",
             "projects/LiteLLM Proxy",
             "projects/llm_cord",
+            "projects/pgai",
           ],
         },
         "contributing",

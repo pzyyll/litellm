@@ -21,9 +21,12 @@ from openai.types.moderation_create_response import Moderation, ModerationCreate
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 from typing_extensions import Callable, Dict, Required, TypedDict, override
 
+import litellm
+
 from ..litellm_core_utils.core_helpers import map_finish_reason
 from .guardrails import GuardrailEventHooks
 from .llms.openai import (
+    Batch,
     ChatCompletionThinkingBlock,
     ChatCompletionToolCallChunk,
     ChatCompletionUsageBlock,
@@ -182,7 +185,10 @@ class CallTypes(Enum):
     arealtime = "_arealtime"
     create_batch = "create_batch"
     acreate_batch = "acreate_batch"
+    aretrieve_batch = "aretrieve_batch"
+    retrieve_batch = "retrieve_batch"
     pass_through = "pass_through_endpoint"
+    anthropic_messages = "anthropic_messages"
 
 
 CallTypesLiteral = Literal[
@@ -206,6 +212,7 @@ CallTypesLiteral = Literal[
     "create_batch",
     "acreate_batch",
     "pass_through_endpoint",
+    "anthropic_messages",
 ]
 
 
@@ -1798,6 +1805,7 @@ all_litellm_params = [
     "max_budget",
     "budget_duration",
     "use_in_pass_through",
+    "merge_reasoning_content_in_choices",
 ] + list(StandardCallbackDynamicParams.__annotations__.keys())
 
 
@@ -1964,3 +1972,34 @@ class ProviderSpecificHeader(TypedDict):
 class SelectTokenizerResponse(TypedDict):
     type: Literal["openai_tokenizer", "huggingface_tokenizer"]
     tokenizer: Any
+
+
+class LiteLLMBatch(Batch):
+    _hidden_params: dict = {}
+    usage: Optional[Usage] = None
+
+    def __contains__(self, key):
+        # Define custom behavior for the 'in' operator
+        return hasattr(self, key)
+
+    def get(self, key, default=None):
+        # Custom .get() method to access attributes with a default value if the attribute doesn't exist
+        return getattr(self, key, default)
+
+    def __getitem__(self, key):
+        # Allow dictionary-style access to attributes
+        return getattr(self, key)
+
+    def json(self, **kwargs):  # type: ignore
+        try:
+            return self.model_dump()  # noqa
+        except Exception:
+            # if using pydantic v1
+            return self.dict()
+
+
+class RawRequestTypedDict(TypedDict, total=False):
+    raw_request_api_base: Optional[str]
+    raw_request_body: Optional[dict]
+    raw_request_headers: Optional[dict]
+    error: Optional[str]
