@@ -932,9 +932,11 @@ class CustomStreamWrapper:
             len(model_response.choices) > 0
             and hasattr(model_response.choices[0].delta, "audio")
             and model_response.choices[0].delta.audio is not None
-        ) or (model_response.choices[0].delta.reasoning_content is not None):
+        ) or (
+            hasattr(model_response.choices[0].delta, "reasoning_content")
+            and model_response.choices[0].delta.reasoning_content is not None
+        ):
             return model_response
-
         else:
             if hasattr(model_response, "usage"):
                 self.chunks.append(model_response)
