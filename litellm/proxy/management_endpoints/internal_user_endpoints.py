@@ -127,7 +127,7 @@ async def new_user(
     - user_role: Optional[str] - Specify a user role - "proxy_admin", "proxy_admin_viewer", "internal_user", "internal_user_viewer", "team", "customer". Info about each role here: `https://github.com/BerriAI/litellm/litellm/proxy/_types.py#L20`
     - max_budget: Optional[float] - Specify max budget for a given user.
     - budget_duration: Optional[str] - Budget is reset at the end of specified duration. If not set, budget is never reset. You can set duration as seconds ("30s"), minutes ("30m"), hours ("30h"), days ("30d"), months ("1mo").
-    - models: Optional[list] - Model_name's a user is allowed to call. (if empty, key is allowed to call all models)
+    - models: Optional[list] - Model_name's a user is allowed to call. (if empty, key is allowed to call all models). Set to ['no-default-models'] to block all model access. Restricting user to only team-based model access.
     - tpm_limit: Optional[int] - Specify tpm limit for a given user (Tokens per minute)
     - rpm_limit: Optional[int] - Specify rpm limit for a given user (Requests per minute)
     - auto_create_key: bool - Default=True. Flag used for returning a key as part of the /user/new response
@@ -739,6 +739,43 @@ async def user_update(
         )
 
 
+async def get_user_key_counts(
+    prisma_client,
+    user_ids: Optional[List[str]] = None,
+):
+    """
+    Helper function to get the count of keys for each user using Prisma's count method.
+
+    Args:
+        prisma_client: The Prisma client instance
+        user_ids: List of user IDs to get key counts for
+
+    Returns:
+        Dictionary mapping user_id to key count
+    """
+    from litellm.constants import UI_SESSION_TOKEN_TEAM_ID
+
+    if not user_ids or len(user_ids) == 0:
+        return {}
+
+    result = {}
+
+    # Get count for each user_id individually
+    for user_id in user_ids:
+        count = await prisma_client.db.litellm_verificationtoken.count(
+            where={
+                "user_id": user_id,
+                "OR": [
+                    {"team_id": None},
+                    {"team_id": {"not": UI_SESSION_TOKEN_TEAM_ID}},
+                ],
+            }
+        )
+        result[user_id] = count
+
+    return result
+
+
 @router.get(
     "/user/get_users",
     tags=["Internal User management"],
@@ -830,14 +867,9 @@ async def get_users(
 
     # Get key count for each user
     if users is not None:
-        user_keys = await prisma_client.db.litellm_verificationtoken.group_by(
-            by=["user_id"],
-            count={"user_id": True},
-            where={"user_id": {"in": [user.user_id for user in users]}},
+        user_key_counts = await get_user_key_counts(
+            prisma_client, [user.user_id for user in users]
         )
-        user_key_counts = {
-            item["user_id"]: item["_count"]["user_id"] for item in user_keys
-        }
     else:
         user_key_counts = {}
 
