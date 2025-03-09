@@ -461,6 +461,9 @@ def convert_to_model_response_object(  # noqa: PLR0915
                         choice["message"].get("content")
                     )
 
+                    if not reasoning_content and choice["message"].get("reasoning_content"):
+                        reasoning_content = choice["message"]["reasoning_content"]
+
                     if reasoning_content:
                         provider_specific_fields["reasoning_content"] = (
                             reasoning_content
